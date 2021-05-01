@@ -1,5 +1,5 @@
 <?php
-echo("CSCI 327 Final Project");
+echo("CSCI 327 Final Project\r\n");
 echo("OK Max and Ian. This is the homepage for our final project.\n
 Let's keep the basic requirements of the project on this page as we're working
 on it so that we have something easy to refer back to.\n\n");
