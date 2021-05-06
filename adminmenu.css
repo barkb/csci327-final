@@ -1,0 +1,19 @@
+body{
+	background-color:#fafafa;
+}
+
+div{
+	display:'flex';
+	flex-direction:column;
+}
+
+button{
+	width:200px;
+	background-color:'#e84233';
+	font-color:white;
+	font-weight:bold;
+}
+
+input{
+	width:200px;
+}
