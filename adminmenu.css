@@ -1,17 +1,21 @@
 body{
-	background-color:#fafafa;
+	background-color: #cfb8b8;
 }
 
-div{
-	display:'flex';
+.container{
+	display:flex;
 	flex-direction:column;
 }
 
 button{
 	width:200px;
-	background-color:'#e84233';
-	font-color:white;
-	font-weight:bold;
+	background-color:#e84233;
+	color:white;
+	border:0;
+	box-shadow:3px 3px 3px grey;
+	margin: 0 0 10px;
+	padding: 5px;
+	
 }
 
 input{

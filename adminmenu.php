@@ -1,19 +1,23 @@
+<?php
+require 'init.php'; //Database connection and other required classes.
+
+
+?>
+
 <!doctype html>
 
 <html lang="en">
 
-<head>
-	<meta charset="utf-8">
+<meta charset="utf-8"/>
 
-	<title>Video Store Admin</title>
-	<link rel="stylesheet" href="adminmenu.css"/>
-</head>
+<title>Video Store Admin</title>
+<link rel="stylesheet" href="adminmenu.css"/>
 
 <body>
-	<div>
+	<div class="container">
 		<h1>Hello administrator</h1>
 		<button>Add movie copy</button>
-		<input>Search for movie</input>
+		<input value="Search for movie" ></input>
 		<button>Add new customer</button>
 		<button>Print store information</button>
 		<button>print top 10 most frequest renters in a store</button>
@@ -24,3 +28,4 @@
 	</div>
 
 </body>
+</html>
