@@ -1,0 +1,109 @@
+-- TABLE CREATION COMMANDS
+CREATE TABLE Store ( 
+    StoreNo INT PRIMARY KEY, 
+    SAddress varchar(255), 
+    SPhone varchar(255), 
+    Is_Done boolean,
+    Assigned varchar(255) 
+) ENGINE=InnoDB;
+
+CREATE TABLE Store_Object ( 
+ObjectID INT PRIMARY KEY, 
+DailyCharge FLOAT
+) ENGINE=InnoDB;
+
+CREATE TABLE Player (
+	ObjectID INT,
+	Brand varchar(255),
+	Model varchar(255), 
+    PlayerFeature varchar(255), 
+    CONSTRAINT playerfk FOREIGN KEY (ObjectID)
+		REFERENCES store_object(ObjectID), 
+    CONSTRAINT playerpk PRIMARY KEY (ObjectID)
+) ENGINE=InnoDB;
+
+CREATE TABLE Movie (
+	ObjectID INT,
+	Actor1 varchar(255), 
+    Actor2 varchar(255), 
+    Director varchar(255), 
+    Title varchar(255), 
+    Category varchar(255), 
+    Producer varchar(255), 
+    CONSTRAINT moviefk FOREIGN KEY (ObjectID)
+		REFERENCES Store_Object(ObjectID), 
+    CONSTRAINT moviepk PRIMARY KEY (ObjectID)
+) ENGINE=InnoDB;
+
+CREATE TABLE Employee (
+	EmployeeID INT PRIMARY KEY,
+    Username varchar(255),
+    Passwd varchar(255),
+    Name varchar(255),
+	Address varchar(255),
+	Phone varchar(255)
+) ENGINE=InnoDB;
+
+CREATE TABLE Hourly (
+	EmployeeID INT, 
+    CONSTRAINT h_employeefk FOREIGN KEY (EmployeeID)
+		REFERENCES Employee(EmployeeID), 
+    CONSTRAINT h_employeepk PRIMARY Key (EmployeeID)
+) ENGINE=InnoDB;
+
+CREATE TABLE Full_Time (
+	EmployeeID INT,
+	Salary INT,
+	CONSTRAINT ft_employeefk FOREIGN KEY (EmployeeID)
+		REFERENCES Employee(EmployeeID), 
+    CONSTRAINT ft_employeepk PRIMARY KEY (EmployeeID)
+) ENGINE=InnoDB;
+
+CREATE TABLE Transactions (
+	TransactionID INT PRIMARY KEY, 
+    DateAndTime varchar(255), 
+    Amount FLOAT,
+	Type varchar(255)
+) ENGINE=InnoDB;
+
+CREATE TABLE Member (
+	MemberID INT PRIMARY KEY, 
+    Username varchar(255),
+    Passwd varchar(255),
+    MemberName varchar(255), 
+    Address varchar(255)
+) ENGINE=InnoDB;
+
+CREATE TABLE Player_Device (
+	CopyNo INT PRIMARY KEY
+) ENGINE=InnoDB;
+
+CREATE TABLE Copy ( 
+    CopyNo INT,
+	Type varchar(255), 
+    CurrentStatus varchar(255), 
+    CONSTRAINT copyfk FOREIGN KEY (CopyNo)
+		REFERENCES Player_Device(CopyNo), 
+    CONSTRAINT copypk PRIMARY KEY (CopyNo)
+) ENGINE=InnoDB;
+
+
+-- DATA CREATION COMMANDS
+--Employees (Admin)
+INSERT INTO `Employee` (`EmployeeID`, `Username`, `Passwd`, `Name`, `Address`, `Phone`) VALUES ('0', 'sbanerji', 'csci327', 'Sugata Banerji', '555 N. Sheridan Rd, Lake Forest, IL 60045', '5551234567');
+INSERT INTO `Employee` (`EmployeeID`, `Username`, `Passwd`, `Name`, `Address`, `Phone`) VALUES ('1', 'cknuckles', 'csci327', 'Craig Knuckles', '555 N. Sheridan Rd, Lake Forest, IL 60045', '5551234567');
+INSERT INTO `Employee` (`EmployeeID`, `Username`, `Passwd`, `Name`, `Address`, `Phone`) VALUES ('2', 'zmirza', 'csci327', 'Zoya Mirza', '555 N. Sheridan Rd, Lake Forest, IL 60045', '5551234567');
+INSERT INTO `Employee` (`EmployeeID`, `Username`, `Passwd`, `Name`, `Address`, `Phone`) VALUES ('3', 'etrevino', 'csci327', 'Enrique Trevino', '555 N. Sheridan Rd, Lake Forest, IL 60045', '5551234567');
+INSERT INTO `Employee` (`EmployeeID`, `Username`, `Passwd`, `Name`, `Address`, `Phone`) VALUES ('4', 'szelenberg', 'csci327', 'Sara Zelenberg', '555 N. Sheridan Rd, Lake Forest, IL 60045', '5551234567'); 
+
+--Members (Customers)
+INSERT INTO `Member` (`MemberID`, `Username`, `Passwd`, `MemberName`, `Address`) VALUES ('0', 'bbarkett', 'csci327', 'Ben Barkett', '555 N. Sheridan Rd, Lake Forest, IL 60045');
+INSERT INTO `Member` (`MemberID`, `Username`, `Passwd`, `MemberName`, `Address`) VALUES ('1', 'mmelnyk', 'csci327', 'Max Melnyk', '555 N. Sheridan Rd, Lake Forest, IL 60045');
+INSERT INTO `Member` (`MemberID`, `Username`, `Passwd`, `MemberName`, `Address`) VALUES ('2', 'istewart', 'csci327', 'Ian Stewart', '555 N. Sheridan Rd, Lake Forest, IL 60045');
+
+--Movies
+INSERT INTO `Movie` (`ObjectID`, `Actor1`, `Actor2`, `Director`, `Title`, `Category`, `Producer`) VALUES ('1', 'Tim Robbins', 'Morgan Freeman', 'Frank Darabont', 'The Shawshank Redemption', 'Drama', 'Castle Rock Entertainment');
+INSERT INTO `Movie` (`ObjectID`, `Actor1`, `Actor2`, `Director`, `Title`, `Category`, `Producer`) VALUES ('2', 'Marlon Brando', 'Al Pacino', 'Francis Ford Coppola', 'The Godfather', 'Crime', 'Paramount Pictures');
+INSERT INTO `Movie` (`ObjectID`, `Actor1`, `Actor2`, `Director`, `Title`, `Category`, `Producer`) VALUES ('3', 'Christian Bale', 'Heath Ledger', 'Christopher Nolan', 'The Dark Knight', 'Action', 'Warner Bros Entertainment');
+INSERT INTO `Movie` (`ObjectID`, `Actor1`, `Actor2`, `Director`, `Title`, `Category`, `Producer`) VALUES ('4', 'Al Pacino', 'Robert De Niro', 'Francis Ford Coppola', 'The Godfather: Part II', 'Crime', 'Paramount Pictures');
+INSERT INTO `Movie` (`ObjectID`, `Actor1`, `Actor2`, `Director`, `Title`, `Category`, `Producer`) VALUES ('5', 'Henry Fonda', 'Lee J. Cobb', 'Sidney Lumet', '12 Angry Men', 'Drama', 'Orion-Nova Productions');
