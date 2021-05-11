@@ -5,6 +5,7 @@
 /*
  * DTABASE CONNECTION
  *  */
+
 define('DB_SERVER', 'localhost');
 define('DB_USERNAME', 'barkb');
 define('DB_PASSWORD', 'csci327');
@@ -14,6 +15,8 @@ if ($mysqli->connect_errno) {
 		echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 			exit;
 }
+
+session_start()
 ?>
 <!doctype html>
 <html lang="en">
@@ -23,7 +26,9 @@ if ($mysqli->connect_errno) {
 <form>
 <body>
 	<div class="container">
-		<h1>Hello administrator</h1>
+		<?php 
+			echo"<h1>Welcome ".$_SESSION['name']."</h1>" 
+		?>
 		<form action="adminmenu.php" method="GET">
 			Add New Customer:
 			Username:<input type="text" name="username"/>
