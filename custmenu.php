@@ -1,7 +1,13 @@
 <?php
 require 'init.php'; //Database connection and other required classes.
 
-$checked_out_sql = "SELECT * FROM Movie JOIN Copy ON Copy.ObjectId = Movie.ObjectId JOIN Transactions ON Copy.CopyNo = Transactions.CopyNo WHERE Copy.CurrentStatus = 0 AND Transactions.memberId = 1";
+session_start();
+
+$memberId = $_SESSION['customerID'];
+$name = $_SESSION['name'];
+
+
+$checked_out_sql = "SELECT * FROM Movie JOIN Copy ON Copy.ObjectId = Movie.ObjectId JOIN Transactions ON Copy.CopyNo = Transactions.CopyNo WHERE Copy.CurrentStatus = 0 AND Transactions.memberId = ".$memberId;
 
 $result = lib::db_query($checked_out_sql);
 $num_rows = $result->num_rows;
@@ -75,7 +81,7 @@ $Genre = "";
 	</head>
 
 	<body>
-		<h1>Welcome Customer</h1>
+		<h1>Welcome <?php echo $name; ?></h1>
 
 		<form action="custmenu.php" method="GET">
 			<!-- Movie search box -->
@@ -104,7 +110,7 @@ $Genre = "";
 	elseif (isset($_GET['checkout']) && ($_GET['checkout']=="set")) {
 		$sql = "INSERT INTO `Transactions` ";
 		$sql = $sql."(`TransactionID`, `CopyNo`, `DateAndTime`, `Amount`, `Type`, `StoreNo`, `MemberId`) ";
-		$sql = $sql."VALUES (NULL, '".$_GET['CopyNo']."', '2021-05-11', '20', 'Rental', '1', '1')";
+		$sql = $sql."VALUES (NULL, '".$_GET['CopyNo']."', '2021-05-11', '20', 'Rental', '1', '".$memberId."')";
 		$result = lib::db_query($sql);
 	}
 	elseif (isset($_GET['return'])) {
@@ -127,6 +133,10 @@ $Genre = "";
 		getresult($sql);
 		
 
+	}
+	elseif (isset($_GET['logout'])) {
+		header('url: http://194.195.213.46');
+		#session_unset();
 	}
 	
 	$mysqli->close();	
@@ -170,5 +180,5 @@ $Genre = "";
 		<input type="submit" value="search" name="dname"/> 
 	</form>
 	<br><br><br>
-	<button>Log Out</button>
+	<button name="logout">Log Out</button>
 	</body>

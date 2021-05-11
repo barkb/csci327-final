@@ -30,22 +30,27 @@ session_start()
 			echo"<h1>Welcome ".$_SESSION['name']."</h1>" 
 		?>
 		<form action="adminmenu.php" method="GET">
-			Add New Customer:
+			<h3>Add New Customer</h3>
 			Username:<input type="text" name="username"/>
 			Password:<input type="text" name="password"/>
 			Name:<input type="text" name="name"/>
 			Address:<input type="text" name="address"/>
+			<br>
 			<input type="submit" value="Add Customer" name="addcust"/>
+			<h3>Search for a movie</h3>
 			Movie title:<input type="text" name="title"/>
 			<input type="submit" value="Search" name="search"/>
+			
+			<h3>Store information</h3>
 			<input type="submit" value="Print store info" name="info"/>
 			<input type="submit" value="Print top 10 most frequent renters" name="toprenters"/>
 			<input type="submit" value="Print top 10 most rented movies" name="toprented"/>
 			<input type="submit" value="Print top 10 most popular movies of the year" name="yearly"/>
 			<input type="submit" value="Print average fine per customer" name="avgfine"/>
-			<input type="submit" value="Log Out" name"logout"/>
+			<input type="submit" value="Log Out" name="logout"/>
+			
+			<h3>Results</h3>
 		</form>
-		<button>Log Out</button>
 	</div>
 	<?php
 		if(isset($_GET['info'])){
@@ -68,7 +73,7 @@ session_start()
 			$sql = $sql."FROM Transactions ";
 			$sql = $sql."JOIN Copy ON Copy.CopyNo = Transactions.CopyNo ";
 			$sql = $sql."JOIN Movie ON Copy.ObjectId = Movie.ObjectID ";
-			$sql = $sql."WHERE StoreNo =  ".$_SESSION['storeNo'];
+			$sql = $sql."WHERE StoreNo =  ".$_SESSION['storeNo']." ";
 			$sql = $sql."GROUP BY Copy.ObjectId ";
 			$sql = $sql."ORDER BY COUNT(Copy.ObjectId) DESC ";
 			$sql = $sql."LIMIT 10";
@@ -119,8 +124,8 @@ session_start()
 			getresult($sql);
 		}
 		elseif(isset($_GET['logout'])){
-			header('url: http://194.195.213.46');
-			#session_unset();
+			session_unset();
+			header('Location: index.php');
 			
 		}
 
