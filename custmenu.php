@@ -7,7 +7,7 @@ $memberId = $_SESSION['memberID'];
 $name = $_SESSION['name'];
 
 
-$checked_out_sql = "SELECT * FROM Movie JOIN Copy ON Copy.ObjectId = Movie.ObjectId JOIN Transactions ON Copy.CopyNo = Transactions.CopyNo WHERE Copy.CurrentStatus = 0 AND Transactions.memberId = 1";
+$checked_out_sql = "SELECT * FROM Movie JOIN Copy ON Copy.ObjectId = Movie.ObjectId JOIN Transactions ON Copy.CopyNo = Transactions.CopyNo WHERE Copy.CurrentStatus = 1 AND Transactions.MemberId = ".$_SESSION['memberID'];
 
 $result = lib::db_query($checked_out_sql);
 $num_rows = $result->num_rows;
@@ -48,7 +48,7 @@ function getcheckoutresult($sql) {
 		foreach($row as $cell){
 			echo "<td>".$cell."</td>";
 		}
-		if ($cell=="1") {
+		if ($cell=="0") {
 			echo "<td><a href=\"custmenu.php?checkout=set&CopyNo=".$row[7]."\">Checkout</a></td>";
 		} else {
 			echo "<td>Unavailable for Checkout</td>";
@@ -101,13 +101,13 @@ $Title = "";
 		getresult($sql);
 	}
 	elseif (isset($_GET['checkout']) && ($_GET['checkout']=="View Movies for Checkout")) {
-		$sql = "SELECT * FROM Movie JOIN Copy ON Copy.ObjectId = Movie.ObjectId WHERE Copy.CurrentStatus = 1";
+		$sql = "SELECT * FROM Movie JOIN Copy ON Copy.ObjectId = Movie.ObjectId WHERE Copy.CurrentStatus = 0";
 		getcheckoutresult($sql);
 	}
 	elseif (isset($_GET['checkout']) && ($_GET['checkout']=="set")) {
 		$sql = "INSERT INTO `Transactions` ";
 		$sql = $sql."(`TransactionID`, `CopyNo`, `DateAndTime`, `Amount`, `Type`, `StoreNo`, `MemberId`) ";
-		$sql = $sql."VALUES (NULL, '".$_GET['CopyNo']."', '2021-05-11', '20', 'Rental', '1', '".$memberId."')";
+		$sql = $sql."VALUES (NULL, '".$_GET['CopyNo']."', '2021-05-11', '20', 'Rental', '0', '".$memberId."')";
 		$result = lib::db_query($sql);
 	}
 	elseif (isset($_GET['return'])) {
