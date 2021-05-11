@@ -125,7 +125,7 @@ else {
 				if(!($btntitle==null)){ 
 					echo "<td>";
 					echo "<form action='adminmenu.php' method='GET'>";
-					echo "<input type='hidden' value='".reset($row)."' name='btnpk'/>";
+					echo "<input type='hidden' value='".$row[0]."' name='btnpk'/>";
 					echo "<input type='submit' value='Add copy' name='".$btntitle."' />";
 					echo "</td>";
 				}
