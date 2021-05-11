@@ -106,4 +106,3 @@ function getresult($sql) {
          </table>
 
 	</body>
-</html>
