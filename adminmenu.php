@@ -3,44 +3,27 @@
 //INIT file loads resources needed by pages in our project
 
 /*
- * DATABASE CONNECTION
- */
-$servername ="194.195.213.46";
-$username = "barkb";
-$password = "csci327";
-$dbnamer = "videostore";
-
-
-
-
-
+ * DTABASE CONNECTION
+ *  */
+define('DB_SERVER', 'localhost');
+define('DB_USERNAME', 'barkb');
+define('DB_PASSWORD', 'csci327');
+define('DB_DATABASE', 'videostore');
 $mysqli = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
 if ($mysqli->connect_errno) {
-	echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
-	exit;
+		echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
+			exit;
 }
 ?>
-
 <!doctype html>
-
 <html lang="en">
-
 <meta charset="utf-8"/>
-
 <title>Video Store Admin</title>
 <link rel="stylesheet" href="adminmenu.css"/>
-
 <form>
-
 <body>
 	<div class="container">
 		<h1>Hello administrator</h1>
-<<<<<<< HEAD
-				<button>Add movie copy</button>
-		<input value="Search for movie" ></input>
-		<button>Add new customer</button>
-		<form action="adminmenu.php" method="GET">
-=======
 		<form action="adminmenu.php" method="GET">
 			Add New Customer:
 			Username:<input type="text" name="username"/>
@@ -50,13 +33,12 @@ if ($mysqli->connect_errno) {
 			<input type="submit" value="Add Customer" name="addcust"/>
 			Movie title:<input type="text" name="title"/>
 			<input type="submit" value="Search" name="search"/>
->>>>>>> cf1fe5dab869d017f9f3392a917b5bb361c0f3e9
 			<input type="submit" value="Print store info" name="info"/>
+			<input type="submit" value="Print top 10 most frequent renters" name="toprenters"/>
+			<input type="submit" value="Print top 10 most rented movies" name="toprented"/>
+			<input type="submit" value="Print top 10 most popular movies of the year" name="yearly"/>
+			<input type="submit" value="Print average fine per customer" name="avgfine"/>
 		</form>
-		<button>print top 10 most frequest renters in a store</button>
-		<button>print top 10 most rented movies in a store</button>
-		<button>print top 10 most popular movies of the year</button>
-		<button>Average fine per customer</button>
 		<button>Log Out</button>
 	</div>
 	<?php
@@ -66,45 +48,60 @@ if ($mysqli->connect_errno) {
 			getresult($sql);
 		}
 		elseif(isset($_GET['toprenters'])){
-			$sql = '';
+			$sql = "SELECT MemberName, COUNT(Transactions.memberId) as 'Rentals Made' ";
+			$sql = $sql."FROM Transactions ";
+			$sql = $sql."JOIN Member ON Member.MemberId = Transactions.MemberId ";
+			$sql = $sql."WHERE StoreNo = 1 ";
+			$sql = $sql."GROUP BY Transactions.MemberId ";
+			$sql = $sql."ORDER BY COUNT(Transactions.MemberId) DESC ";
+			$sql = $sql."LIMIT 10";
 			getresult($sql);
 		}
 		elseif(isset($_GET['toprented'])){
-			$sql = '';
+			$sql = "SELECT Movie.Title ";
+			$sql = $sql."FROM Transactions ";
+			$sql = $sql."JOIN Copy ON Copy.CopyNo = Transactions.CopyNo ";
+			$sql = $sql."JOIN Movie ON Copy.ObjectId = Movie.ObjectID ";
+			$sql = $sql."WHERE StoreNo = 1 ";
+			$sql = $sql."GROUP BY Copy.ObjectId ";
+			$sql = $sql."ORDER BY COUNT(Copy.ObjectId) DESC ";
+			$sql = $sql."LIMIT 10";
 			getresult($sql);
-
+	
 		}
 		elseif(isset($_GET['yearly'])){
-			$sql = '';
+			$sql = "SELECT Movie.Title ";
+			$sql = $sql."FROM Transactions ";
+			$sql = $sql."JOIN Copy ON Copy.CopyNo = Transactions.CopyNo ";
+			$sql = $sql."JOIN Movie ON Copy.ObjectId = Movie.ObjectID ";
+			$sql = $sql."WHERE YEAR(Transactions.DateAndTime)=YEAR(NOW()) ";
+			$sql = $sql."GROUP BY Copy.ObjectId ";
+			$sql = $sql."ORDER BY COUNT(Copy.ObjectId) DESC ";
+			$sql = $sql."LIMIT 10";
 			getresult($sql);
 		}
 		elseif(isset($_GET['avgfine'])){
-			$sql = '';
-			getresult($sql);
+			$sql = "SELECT MemberName as 'Customer', AVG(Amount) as 'Average Fine' ";
+			$sql = $sql."FROM Transactions ";
+			$sql = $sql."JOIN Member on Transactions.MemberId = Member.MemberID ";
+			$sql = $sql."GROUP BY Transactions.MemberId";
+			getresult($sql);		
 		}
-
-<<<<<<< HEAD
-
-		function getresult($sql) {
-			global $mysqli;
-			$results = $mysqli->query($sql);
-			#echo($mysqli->error);
-=======
-			getresult($sql,'add_dvd','add_bd');
+		elseif(isset($_GET['search']) && !($_GET['title']==null)){
+			$title = $_GET['title'];
+			$sql = "SELECT * FROM Movie WHERE Title LIKE '%".$title."%'";
+			getresult($sql,'add_dvd','add_bluray');
 		}
 		elseif(isset($_GET['add_dvd']) && !($_GET['btnrow']==null)){
 			$btnrow = unserialize($_GET['btnrow']);
 			echo "Added DVD copy of ".$btnrow[4];
 			$sql = "INSERT INTO Copy(ObjectID,Type,CurrentStatus) VALUES (".$btnrow[0].",'DVD',0)";
-
 			getresult($sql);
 		}
-		elseif(isset($_GET['add_bd']) && !($_GET['btnrow']==null)){
+		elseif(isset($_GET['add_bluray']) && !($_GET['btnrow']==null)){
 			$btnrow = unserialize($_GET['btnrow']);
 			echo "Added Blu Ray copy of ".$btnrow[4];
-
 			$sql = "INSERT INTO Copy(ObjectID,Type,CurrentStatus) VALUES (".$btnrow[0].",'DVD',0)";
-
 			getresult($sql);
 		}
 		elseif(isset($_GET['addcust']) && !($_GET['username']==null) && !($_GET['password']==null) && !($_GET['name']==null) && !($_GET['address']==null)){
@@ -112,29 +109,20 @@ if ($mysqli->connect_errno) {
 			$password = $_GET['password'];
 			$name = $_GET['name'];
 			$address = $_GET['address'];
-
 			$sql = "INSERT INTO Member(Username,Passwd,MemberName,Address) VALUES ('".$username."','".$password."','".$name."','".$address."')";
 			getresult($sql);
 		}
 
-	
-			
 		function getresult($sql,$btntitle=null,$btntitle2=null) {
 			global $mysqli;
 			$results = $mysqli->query($sql);
-			if($results->num_rows==0){
-				return;
-			}
->>>>>>> cf1fe5dab869d017f9f3392a917b5bb361c0f3e9
 			$fields = $results->fetch_fields();
+			echo "<table border='1'>";
+			echo "<tr>";
 			foreach ($fields as $field){
-<<<<<<< HEAD
-				echo $field->name;
-=======
 				echo "<td><b>".$field->name."</b></td>";
 			}
 			echo "</tr>";
-
 			foreach ($results->fetch_all() as $row){
 				echo "<tr>";
 				foreach($row as $cell){
@@ -143,29 +131,27 @@ if ($mysqli->connect_errno) {
 				if(!($btntitle==null)){ 
 					echo "<td>";
 					echo "<form action='adminmenu.php' method='GET'>";
-					echo "<input type='hidden' value='".serialize($row)."' name='btnrow'/>";
-					echo "<input type='submit' value='Add DVD' name='".$btntitle."' />";
-					echo "</form>";
+					echo "<input type='hidden' value='".serialize($row)."' name='btnpk'/>";
+					echo "<input type='hidden' value='".$row[0]."' name='btnpk'/>";
+					echo "<input type='submit' value='".$btntitle."' name='".$btntitle."' />";
 					echo "</td>";
 				}
 				if(!($btntitle==null)){ 
 					echo "<td>";
 					echo "<form action='adminmenu.php' method='GET'>";
-					echo "<input type='hidden' value='".serialize($row)."' name='btnrow'/>";
-					echo "<input type='submit' value='Add BD' name='".$btntitle2."' />";
-					echo "</form>";
+					echo "<input type='hidden' value='".serialize($row)."' name='btnpk'/>";
+					echo "<input type='hidden' value='".$row[0]."' name='btnpk'/>";
+					echo "<input type='submit' value='".$btntitle2."' name='".$btntitle2."' />";
 					echo "</td>";
 				}
 
 				echo "</tr>";
->>>>>>> cf1fe5dab869d017f9f3392a917b5bb361c0f3e9
 			}
-
-		}
-
+			echo "</table>";
+			
+					}
 		$mysqli->close();
-
 	?>
-
 </body>
 </html>
+
