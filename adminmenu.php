@@ -37,13 +37,15 @@ else {
 				<button>Add movie copy</button>
 		<input value="Search for movie" ></input>
 		<button>Add new customer</button>
-		<form action="adminmenu.php" method="GET">
+		<form action="adminmenu.php" method="GET">			
+			Movie title:<input type="text" name="title"/>
+			<input type="submit" value="Search" name="search"/>
 			<input type="submit" value="Print store info" name="info"/>
+			<input type="submit" value="Print top 10 most frequent renters" name="toprenters"/>
+			<input type="submit" value="Print top 10 most rented movies" name="toprented"/>
+			<input type="submit" value="Print top 10 most popular movies of the year" name="yearly"/>
+			<input type="submit" value="Print average fine per customer" name="avgfine"/>
 		</form>
-		<button>print top 10 most frequest renters in a store</button>
-		<button>print top 10 most rented movies in a store</button>
-		<button>print top 10 most popular movies of the year</button>
-		<button>Average fine per customer</button>
 		<button>Log Out</button>
 	</div>
 	<?php
@@ -52,32 +54,73 @@ else {
 			getresult($sql);
 		}
 		elseif(isset($_GET['toprenters'])){
-			$sql = '';
+			$sql = "SELECT MemberName, COUNT(Transactions.memberId) as 'Rentals Made' ";
+			$sql = $sql."FROM Transactions ";
+			$sql = $sql."JOIN Member ON Member.MemberId = Transactions.MemberId ";
+			$sql = $sql."WHERE StoreNo = 1 ";
+			$sql = $sql."GROUP BY Transactions.MemberId ";
+			$sql = $sql."ORDER BY COUNT(Transactions.MemberId) DESC ";
+			$sql = $sql."LIMIT 10";
 			getresult($sql);
 		}
 		elseif(isset($_GET['toprented'])){
-			$sql = '';
+			$sql = "SELECT Movie.Title ";
+			$sql = $sql."FROM Transactions ";
+			$sql = $sql."JOIN Copy ON Copy.CopyNo = Transactions.CopyNo ";
+			$sql = $sql."JOIN Movie ON Copy.ObjectId = Movie.ObjectID ";
+			$sql = $sql."WHERE StoreNo = 1 ";
+			$sql = $sql."GROUP BY Copy.ObjectId ";
+			$sql = $sql."ORDER BY COUNT(Copy.ObjectId) DESC ";
+			$sql = $sql."LIMIT 10";
 			getresult($sql);
-
+	
 		}
 		elseif(isset($_GET['yearly'])){
-			$sql = '';
+			$sql = "SELECT Movie.Title ";
+			$sql = $sql."FROM Transactions ";
+			$sql = $sql."JOIN Copy ON Copy.CopyNo = Transactions.CopyNo ";
+			$sql = $sql."JOIN Movie ON Copy.ObjectId = Movie.ObjectID ";
+			$sql = $sql."WHERE YEAR(Transactions.DateAndTime)=YEAR(NOW()) ";
+			$sql = $sql."GROUP BY Copy.ObjectId ";
+			$sql = $sql."ORDER BY COUNT(Copy.ObjectId) DESC ";
+			$sql = $sql."LIMIT 10";
 			getresult($sql);
 		}
 		elseif(isset($_GET['avgfine'])){
-			$sql = '';
+			$sql = "SELECT MemberName as 'Customer', AVG(Amount) as 'Average Fine' ";
+			$sql = $sql."FROM Transactions ";
+			$sql = $sql."JOIN Member on Transactions.MemberId = Member.MemberID ";
+			$sql = $sql."GROUP BY Transactions.MemberId";
+
 			getresult($sql);		
+		}
+		elseif(isset($_GET['search']) && !($_GET['title']==null)){
+			$title = $_GET['title'];
+			$sql = "SELECT * FROM Movie WHERE Title LIKE '%".$title."%'";
+
+			getresult($sql);
 		}
 	
 			
 		function getresult($sql) {
 			global $mysqli;
 			$results = $mysqli->query($sql);
-			#echo($mysqli->error);
 			$fields = $results->fetch_fields();
+			echo "<table border='1'>";
+			echo "<tr>";
 			foreach ($fields as $field){
-				echo $field->name;
+				echo "<td><b>".$field->name."</b></td>";
 			}
+			echo "</tr>";
+
+			foreach ($results->fetch_all() as $row){
+				echo "<tr>";
+				foreach($row as $cell){
+					echo "<td>".$cell."</td>";
+				}
+				echo "</tr>";
+			}
+			echo "</table>";
 			
 		}
 
