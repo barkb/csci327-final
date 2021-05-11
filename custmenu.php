@@ -2,8 +2,8 @@
 require 'init.php'; //Database connection and other required classes.
 
 $servername ="localhost";
-$username = "MaxMel"
-$password = "321"
+$username = "MaxMel";
+$password = "321";
 $dbnamer = "videostore";
 
 

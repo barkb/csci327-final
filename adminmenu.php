@@ -6,8 +6,8 @@
  * DATABASE CONNECTION
  */
 $servername ="localhost";
-$username = "IanStew"
-$password = "123"
+$username = "IanStew";
+$password = "123";
 $dbnamer = "videostore";
 
 $mysqli = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
