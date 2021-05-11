@@ -69,7 +69,7 @@ session_start()
 			getresult($sql);
 		}
 		elseif(isset($_GET['toprented'])){
-			$sql = "SELECT Movie.Title ";
+			$sql = "SELECT Movie.Title, COUNT(Copy.ObjectId) as 'Times rented' ";
 			$sql = $sql."FROM Transactions ";
 			$sql = $sql."JOIN Copy ON Copy.CopyNo = Transactions.CopyNo ";
 			$sql = $sql."JOIN Movie ON Copy.ObjectId = Movie.ObjectID ";
@@ -81,7 +81,7 @@ session_start()
 	
 		}
 		elseif(isset($_GET['yearly'])){
-			$sql = "SELECT Movie.Title ";
+			$sql = "SELECT Movie.Title, COUNT(Copy.ObjectId) as 'Times rented' ";
 			$sql = $sql."FROM Transactions ";
 			$sql = $sql."JOIN Copy ON Copy.CopyNo = Transactions.CopyNo ";
 			$sql = $sql."JOIN Movie ON Copy.ObjectId = Movie.ObjectID ";

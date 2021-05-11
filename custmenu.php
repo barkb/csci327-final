@@ -7,7 +7,7 @@ $memberId = $_SESSION['memberID'];
 $name = $_SESSION['name'];
 
 
-$checked_out_sql = "SELECT * FROM Movie JOIN Copy ON Copy.ObjectId = Movie.ObjectId JOIN Transactions ON Copy.CopyNo = Transactions.CopyNo WHERE Copy.CurrentStatus = 0 AND Transactions.MemberId = '".$memberId."'";
+$checked_out_sql = "SELECT * FROM Movie JOIN Copy ON Copy.ObjectId = Movie.ObjectId JOIN Transactions ON Copy.CopyNo = Transactions.CopyNo WHERE Copy.CurrentStatus = 0 AND Transactions.memberId = 1";
 
 $result = lib::db_query($checked_out_sql);
 $num_rows = $result->num_rows;
@@ -64,8 +64,6 @@ function generate_return_sql($copynum) {
 }
 
 $Title = "";
-$Director = "";
-$Genre = "";
 
 ?>
 
@@ -80,7 +78,7 @@ $Genre = "";
 	</head>
 
 	<body>
-		<h1>Welcome <?php echo $name; ?></h1>
+		<h1>Welcome <?php echo $_SESSION['name']; ?></h1>
 
 		<form action="custmenu.php" method="GET">
 			<!-- Movie search box -->
@@ -128,14 +126,14 @@ $Genre = "";
 	}
 	elseif (isset($_GET['dname']) && !($_GET['Name']==null)) {
 		$dname = ($_GET['dname']);
-		$sql = "SELECT * FROM Movie WHERE Director LIKE '%".$dname."%'";
+		$sql = "SELECT * FROM Movie WHERE Director LIKE '".$dname."'";
 		getresult($sql);
 		
 
 	}
 	elseif (isset($_GET['logout'])) {
-		header('url: http://194.195.213.46');
-		#session_unset();
+		session_unset();
+		header('Location: index.php');
 	}
 	
 	$mysqli->close();	
@@ -179,5 +177,6 @@ $Genre = "";
 		<input type="submit" value="search" name="dname"/> 
 	</form>
 	<br><br><br>
-	<button name="logout">Log Out</button>
+	<form action="custmenu.php" method="GET">
+	<input type="submit" name="logout" value="Logout"/>
 	</body>
