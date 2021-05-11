@@ -12,7 +12,7 @@ if ($conn -> connect_error){
 	die("Connection failed: " . $conn -> connect_error);
 }
 else{
-	     $userCust = $_POST["Custid"];
+    $userCust = $_POST["Custid"];
         $passwordCust = $_POST["CustPass"];
 
 	$sql = "SELECT * FROM Member ";
