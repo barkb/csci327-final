@@ -15,9 +15,6 @@ if ($mysqli->connect_errno) {
 	echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 	exit;
 }
-else {
-	echo "success";
-}
 ?>
 
 <!doctype html>
@@ -34,10 +31,13 @@ else {
 <body>
 	<div class="container">
 		<h1>Hello administrator</h1>
-				<button>Add movie copy</button>
-		<input value="Search for movie" ></input>
-		<button>Add new customer</button>
-		<form action="adminmenu.php" method="GET">			
+		<form action="adminmenu.php" method="GET">
+			Add New Customer:
+			Username:<input type="text" name="username"/>
+			Password:<input type="text" name="password"/>
+			Name:<input type="text" name="name"/>
+			Address:<input type="text" name="address"/>
+			<input type="submit" value="Add Customer" name="addcust"/>
 			Movie title:<input type="text" name="title"/>
 			<input type="submit" value="Search" name="search"/>
 			<input type="submit" value="Print store info" name="info"/>
@@ -50,7 +50,8 @@ else {
 	</div>
 	<?php
 		if(isset($_GET['info'])){
-			$sql = 'SELECT * FROM Employee';
+			$storeNo=1;
+			$sql = "SELECT SAddress as 'Address',SPhone as 'Phone number' FROM Store WHERE StoreNo=".$storeNo;
 			getresult($sql);
 		}
 		elseif(isset($_GET['toprenters'])){
@@ -98,17 +99,41 @@ else {
 			$title = $_GET['title'];
 			$sql = "SELECT * FROM Movie WHERE Title LIKE '%".$title."%'";
 
-			getresult($sql,'addcopy');
+			getresult($sql,'add_dvd','add_bd');
 		}
-		elseif(isset($_GET['addcopy']) && !($_GET['btnpk']==null)){
-			$btnpk = $_GET['btnpk'];
-			echo "Added copy of ".$btnpk;
+		elseif(isset($_GET['add_dvd']) && !($_GET['btnrow']==null)){
+			$btnrow = unserialize($_GET['btnrow']);
+			echo "Added DVD copy of ".$btnrow[4];
+			$sql = "INSERT INTO Copy(ObjectID,Type,CurrentStatus) VALUES (".$btnrow[0].",'DVD',0)";
+
+			getresult($sql);
 		}
+		elseif(isset($_GET['add_bd']) && !($_GET['btnrow']==null)){
+			$btnrow = unserialize($_GET['btnrow']);
+			echo "Added Blu Ray copy of ".$btnrow[4];
+
+			$sql = "INSERT INTO Copy(ObjectID,Type,CurrentStatus) VALUES (".$btnrow[0].",'DVD',0)";
+
+			getresult($sql);
+		}
+		elseif(isset($_GET['addcust']) && !($_GET['username']==null) && !($_GET['password']==null) && !($_GET['name']==null) && !($_GET['address']==null)){
+			$username = $_GET['username'];
+			$password = $_GET['password'];
+			$name = $_GET['name'];
+			$address = $_GET['address'];
+
+			$sql = "INSERT INTO Member(Username,Passwd,MemberName,Address) VALUES ('".$username."','".$password."','".$name."','".$address."')";
+			getresult($sql);
+		}
+
 	
 			
-		function getresult($sql,$btntitle) {
+		function getresult($sql,$btntitle=null,$btntitle2=null) {
 			global $mysqli;
 			$results = $mysqli->query($sql);
+			if($results->num_rows==0){
+				return;
+			}
 			$fields = $results->fetch_fields();
 			echo "<table border='1'>";
 			echo "<tr>";
@@ -125,10 +150,20 @@ else {
 				if(!($btntitle==null)){ 
 					echo "<td>";
 					echo "<form action='adminmenu.php' method='GET'>";
-					echo "<input type='hidden' value='".$row[0]."' name='btnpk'/>";
-					echo "<input type='submit' value='Add copy' name='".$btntitle."' />";
+					echo "<input type='hidden' value='".serialize($row)."' name='btnrow'/>";
+					echo "<input type='submit' value='Add DVD' name='".$btntitle."' />";
+					echo "</form>";
 					echo "</td>";
 				}
+				if(!($btntitle==null)){ 
+					echo "<td>";
+					echo "<form action='adminmenu.php' method='GET'>";
+					echo "<input type='hidden' value='".serialize($row)."' name='btnrow'/>";
+					echo "<input type='submit' value='Add BD' name='".$btntitle2."' />";
+					echo "</form>";
+					echo "</td>";
+				}
+
 				echo "</tr>";
 			}
 			echo "</table>";
