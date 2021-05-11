@@ -43,12 +43,13 @@ session_start()
 			<input type="submit" value="Print top 10 most rented movies" name="toprented"/>
 			<input type="submit" value="Print top 10 most popular movies of the year" name="yearly"/>
 			<input type="submit" value="Print average fine per customer" name="avgfine"/>
+			<input type="submit" value="Log Out" name"logout"/>
 		</form>
 		<button>Log Out</button>
 	</div>
 	<?php
 		if(isset($_GET['info'])){
-			$storeNo=1;
+			$storeNo=$_SESSION['storeNo'];
 			$sql = "SELECT SAddress as 'Address',SPhone as 'Phone number' FROM Store WHERE StoreNo=".$storeNo;
 			getresult($sql);
 		}
@@ -67,7 +68,7 @@ session_start()
 			$sql = $sql."FROM Transactions ";
 			$sql = $sql."JOIN Copy ON Copy.CopyNo = Transactions.CopyNo ";
 			$sql = $sql."JOIN Movie ON Copy.ObjectId = Movie.ObjectID ";
-			$sql = $sql."WHERE StoreNo = 1 ";
+			$sql = $sql."WHERE StoreNo =  ".$_SESSION['storeNo'];
 			$sql = $sql."GROUP BY Copy.ObjectId ";
 			$sql = $sql."ORDER BY COUNT(Copy.ObjectId) DESC ";
 			$sql = $sql."LIMIT 10";
@@ -116,6 +117,11 @@ session_start()
 			$address = $_GET['address'];
 			$sql = "INSERT INTO Member(Username,Passwd,MemberName,Address) VALUES ('".$username."','".$password."','".$name."','".$address."')";
 			getresult($sql);
+		}
+		elseif(isset($_GET['logout'])){
+			header('url: http://194.195.213.46');
+			#session_unset();
+			
 		}
 
 		function getresult($sql,$btntitle=null,$btntitle2=null) {
