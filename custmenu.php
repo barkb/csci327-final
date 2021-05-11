@@ -25,8 +25,6 @@ function getresult($sql) {
 	}
 	echo "</table>";
 }		
-
-
 ?>
 
 
