@@ -7,7 +7,7 @@ $memberId = $_SESSION['customerID'];
 $name = $_SESSION['name'];
 
 
-$checked_out_sql = "SELECT * FROM Movie JOIN Copy ON Copy.ObjectId = Movie.ObjectId JOIN Transactions ON Copy.CopyNo = Transactions.CopyNo WHERE Copy.CurrentStatus = 0 AND Transactions.memberId = ".$memberId;
+$checked_out_sql = "SELECT * FROM Movie JOIN Copy ON Copy.ObjectId = Movie.ObjectId JOIN Transactions ON Copy.CopyNo = Transactions.CopyNo WHERE Copy.CurrentStatus = 0 AND Transactions.memberId = '%".$memberId."%'";
 
 $result = lib::db_query($checked_out_sql);
 $num_rows = $result->num_rows;
