@@ -37,6 +37,7 @@ else{
         else
         {
         	echo "error retry password";
-        	echo "<input type='reset' value='Reset' onClick = "index.php" />";
+        	echo "<input type='reset' value='Reset' onClick='window.location.reload()'/>";
+
 	}
 }
