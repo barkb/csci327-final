@@ -5,10 +5,10 @@
 /*
  * DATABASE CONNECTION
  */
-define('DB_SERVER', 'localhost');
-define('DB_USERNAME', 'barkb');
-define('DB_PASSWORD', 'csci327');
-define('DB_DATABASE', 'videostore');
+$servername ="localhost";
+$username = "IanStew"
+$password = "123"
+$dbnamer = "videostore";
 
 $mysqli = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
 if ($mysqli->connect_errno) {
@@ -66,10 +66,10 @@ else {
 		}
 		elseif(isset($_GET['avgfine'])){
 			$sql = '';
-			getresult($sql);		
+			getresult($sql);
 		}
-	
-			
+
+
 		function getresult($sql) {
 			global $mysqli;
 			$results = $mysqli->query($sql);
@@ -78,7 +78,7 @@ else {
 			foreach ($fields as $field){
 				echo $field->name;
 			}
-			
+
 		}
 
 		$mysqli->close();
