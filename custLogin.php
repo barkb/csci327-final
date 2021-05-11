@@ -12,8 +12,8 @@ if ($conn -> connect_error){
 	die("Connection failed: " . $conn -> connect_error);
 }
 else{
-	     $userCust = $_POST["Custid"];
-        $passwordCust = $_POST["CustPass"];
+	     $userCust = $_POST["custid"];
+        $passwordCust = $_POST["custPass"];
 
 	$sql = "SELECT * FROM Member ";
 	$sql = $sql . "WHERE Username='".$userCust."' AND Passwd='".$passwordCust."'";
