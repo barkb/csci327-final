@@ -26,8 +26,35 @@ function getresult($sql) {
 	echo "</table>";
 }
 
+function getcheckoutresult($sql) {
+	global $mysqli;
+	$results = $mysqli->query($sql);
+	$fields = $results->fetch_fields();
+	echo "<table border='1'>";
+	echo "<tr>";
+	foreach ($fields as $field){
+		echo "<td><b>".$field->name."</b></td>";
+	}
+	echo"<td><b>Checkout</b></td>";
+	echo "</tr>";
+	foreach ($results->fetch_all() as $row){
+		echo "<tr>";
+		var_dump($row);
+		foreach($row as $cell){
+			echo "<td>".$cell."</td>";
+		}
+		if ($cell=="1") {
+			echo "<td><a href=\"custmenu.php?checkout=set&CopyNo=".$row[7]."\">Checkout</a></td>";
+		} else {
+			echo "<td>Unavailable for Checkout</td>";
+		}
+		echo "</tr>";
+	}
+	echo "</table>";
+}
+
 function generate_return_sql($copynum) {
-	$sql = "UPDATE Copy SET CurrentStatus = 1 WHERE CopyNo = '%".$copynum."%'";
+	$sql = "UPDATE Copy SET CurrentStatus = 1 WHERE CopyNo = ".$copynum;
 	return $sql;
 }
 
@@ -70,13 +97,20 @@ $Genre = "";
 	       	$sql = $sql." WHERE Title LIKE '%".$Title."%'";
 		getresult($sql);
 	}
-	elseif (isset($_GET['checkout'])) {
+	elseif (isset($_GET['checkout']) && ($_GET['checkout']=="View Movies for Checkout")) {
 		$sql = "SELECT * FROM Movie JOIN Copy ON Copy.ObjectId = Movie.ObjectId WHERE Copy.CurrentStatus = 1";
-		getresult($sql);
+		getcheckoutresult($sql);
+	}
+	elseif (isset($_GET['checkout']) && ($_GET['checkout']=="set")) {
+		$sql = "INSERT INTO `Transactions` ";
+		$sql = $sql."(`TransactionID`, `CopyNo`, `DateAndTime`, `Amount`, `Type`, `StoreNo`, `MemberId`) ";
+		$sql = $sql."VALUES (NULL, '".$_GET['CopyNo']."', '2021-05-11', '20', 'Rental', '1', '1')";
+		$result = lib::db_query($sql);
 	}
 	elseif (isset($_GET['return'])) {
-		$sql = generate_return_sql(strval($row['CopyNo']));
-		lib::db_query($sql);
+		$sql = generate_return_sql($_GET['CopyNo']);
+		$result = lib::db_query($sql);
+		echo $result;
 	}
 	elseif (isset($_GET['fine'])) {
 		$sql = "SELECT MemberName as 'Customer', AVG(Amount) as 'Average Fine' ";
@@ -88,19 +122,18 @@ $Genre = "";
 		var_dump($result);
 	}
 	elseif (isset($_GET['dname']) && !($_GET['Name']==null)) {
-		$dname = ($_GET['dname'});
+		$dname = ($_GET['dname']);
 		$sql = "SELECT * FROM Movie WHERE Director LIKE '%".$dname."%'";
-		$dresult = lib::db_query($sql);
-		$dnum_rows = $dresult->num_rows;
+		getresult($sql);
 		
 
 	}
 	
 	$mysqli->close();	
 ?>
-
+	<h3>Customer Holdings</h3>
        <?php if ($num_rows == 0) { ?>
-          <b>No records were found in the database.</b>
+          <b>No Customer Records.</b>
       <?php  } else { ?>
         
               <b>Listing of Customer  Records:</b>
@@ -113,7 +146,7 @@ $Genre = "";
             <td>Type</td>
             <td>&nbsp;</td>
          </tr>
-	 <?php while ( $row = $result->fetch_assoc() ) { ?>
+	 <?php while ( $row = $result->fetch_assoc() ) {  ?>
             <tr  valign="top">
                <td><?= $row['Title'] ?></td>
                <td><?= $row['Director'] ?></td>
@@ -121,12 +154,12 @@ $Genre = "";
                 <td><?= $row['Type'] ?></td>
 	       <td>
 		<form action="custmenu.php" method="GET">
-			<input type="submit" value="Return Movie" name="return"/>
-			<input type="submit" value="Calculate Fine" name="fine"/>		  
+		<a href="custmenu.php?return=Return+Movie&CopyNo=<?=$row['CopyNo']?>"/>Return Movie</a>
+		<input type="submit" value="Calculate Fine" name="fine"/>		  
 	       </form>
 		</td>
             </tr>
-	 <?php }  ?>
+	 <?php   }  ?>
 	<?php } ?>
 	 </table>
 	<br><br><br>
