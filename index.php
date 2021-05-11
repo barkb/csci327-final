@@ -15,9 +15,9 @@
 <br><br>
 <h4> Member Login<h4>
 <form action="custLogin.php" method="POST">
-	Username: <input type="text" name= "custid">
+	Username: <input type="text" name= "memid">
 	<br>
-	Password: <input type= "password" name= "custPass">
+	Password: <input type= "password" name= "memPass">
 	<br><br>
   <button type="submit" name="login" value="login">login</button>
 </form>
