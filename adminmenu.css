@@ -7,7 +7,7 @@ body{
 	flex-direction:column;
 }
 
-button{
+button .button{
 	width:200px;
 	background-color:#e84233;
 	color:white;
