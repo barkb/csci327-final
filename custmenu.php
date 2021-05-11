@@ -3,11 +3,11 @@ require 'init.php'; //Database connection and other required classes.
 
 session_start();
 
-$memberId = $_SESSION['customerID'];
+$memberId = $_SESSION['memberID'];
 $name = $_SESSION['name'];
 
 
-$checked_out_sql = "SELECT * FROM Movie JOIN Copy ON Copy.ObjectId = Movie.ObjectId JOIN Transactions ON Copy.CopyNo = Transactions.CopyNo WHERE Copy.CurrentStatus = 0 AND Transactions.memberId = '%".$memberId."%'";
+$checked_out_sql = "SELECT * FROM Movie JOIN Copy ON Copy.ObjectId = Movie.ObjectId JOIN Transactions ON Copy.CopyNo = Transactions.CopyNo WHERE Copy.CurrentStatus = 0 AND Transactions.MemberId = '".$memberId."'";
 
 $result = lib::db_query($checked_out_sql);
 $num_rows = $result->num_rows;

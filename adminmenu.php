@@ -147,17 +147,17 @@ session_start()
 				if(!($btntitle==null)){ 
 					echo "<td>";
 					echo "<form action='adminmenu.php' method='GET'>";
-					echo "<input type='hidden' value='".serialize($row)."' name='btnpk'/>";
-					echo "<input type='hidden' value='".$row[0]."' name='btnpk'/>";
+					echo "<input type='hidden' value='".serialize($row)."' name='btnrow'/>";
 					echo "<input type='submit' value='".$btntitle."' name='".$btntitle."' />";
+					echo "</form>";
 					echo "</td>";
 				}
-				if(!($btntitle==null)){ 
+				if(!($btntitle2==null)){ 
 					echo "<td>";
 					echo "<form action='adminmenu.php' method='GET'>";
-					echo "<input type='hidden' value='".serialize($row)."' name='btnpk'/>";
-					echo "<input type='hidden' value='".$row[0]."' name='btnpk'/>";
+					echo "<input type='hidden' value='".serialize($row)."' name='btnrow'/>";
 					echo "<input type='submit' value='".$btntitle2."' name='".$btntitle2."' />";
+					echo "</form>";
 					echo "</td>";
 				}
 
