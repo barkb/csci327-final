@@ -45,7 +45,6 @@ function getcheckoutresult($sql) {
 	echo "</tr>";
 	foreach ($results->fetch_all() as $row){
 		echo "<tr>";
-		var_dump($row);
 		foreach($row as $cell){
 			echo "<td>".$cell."</td>";
 		}
