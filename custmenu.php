@@ -1,7 +1,7 @@
 <?php
 require 'init.php'; //Database connection and other required classes.
 
-$checked_out_sql = "SELECT * FROM Movie JOIN Copy ON Copy.ObjectId = Movie.ObjectId JOIN Transactions ON Copy.CopyNo = Transactions.CopyNo WHERE Copy.CurrentStatus = 1 AND Transactions.memberId = 0";
+$checked_out_sql = "SELECT * FROM Movie JOIN Copy ON Copy.ObjectId = Movie.ObjectId JOIN Transactions ON Copy.CopyNo = Transactions.CopyNo WHERE Copy.CurrentStatus = 0 AND Transactions.memberId = 1";
 
 $result = lib::db_query($checked_out_sql);
 $num_rows = $result->num_rows;
@@ -24,7 +24,17 @@ function getresult($sql) {
 		echo "</tr>";
 	}
 	echo "</table>";
-}		
+}
+
+function generate_return_sql($copynum) {
+	$sql = "UPDATE Copy SET CurrentStatus = 1 WHERE CopyNo = '%".$copynum."%'";
+	return $sql;
+}
+
+$Title = "";
+$Director = "";
+$Genre = "";
+
 ?>
 
 
@@ -40,37 +50,50 @@ function getresult($sql) {
 	<body>
 		<h1>Welcome Customer</h1>
 
-		<form action="custmenu.php" method="GETT">
+		<form action="custmenu.php" method="GET">
 			<!-- Movie search box -->
-			<h4>Search by Movie Title, Director, or Genre</h4>
+			<h4>Search by Movie Title</h4>
 			<label for="Title">Title: </label>
-			<input type="text" name="Title" value="<?= $Title?>"><br>
-			<label for="Director">Director: </label>
-			<input type="text" name="Director" value="<?= $Director?>"><br>
-			<label for="Genre">Genre: </label>
-			<input type="text" name="Genre" value="<?= $Genre?>"><br>
+			<input type="text" name="Title"><br>
 			<input type="submit" value="submit" name="search"/>
-			<br><br>
+			<br><br>	
+		</form>
+		<form action="custmenu.php" method=GET>
 			<input type="submit" value="View Movies for Checkout" name="checkout"/>
-			
-				
+			<br><br>
 		</form>
 
 	<?php
-	if (isset($_GET['search'])) {
-		$Title = mysqli_real_escape_string($_REQUEST["Title"]);
-		$Director = mysqli_real_escape_string($_REQUEST["Director"]);
-		$Genre = mysqli_real_escape_string($_REQUEST["Genre"]);
+	if (isset($_GET['search']) && !($_GET['Title']==null)) {
+		$Title = ($_GET['Title']);
 		$sql = "SELECT * FROM Movie";
 	       	$sql = $sql." WHERE Title LIKE '%".$Title."%'";
-		$sql = $sql." OR Director LIKE '%".$Director."%'";
-		$sql = $sql." OR Genre LIKE '%".$Genre."%'";
-		$sql = $sql." ORDBER BY Title ASC";
 		getresult($sql);
 	}
 	elseif (isset($_GET['checkout'])) {
 		$sql = "SELECT * FROM Movie JOIN Copy ON Copy.ObjectId = Movie.ObjectId WHERE Copy.CurrentStatus = 1";
 		getresult($sql);
+	}
+	elseif (isset($_GET['return'])) {
+		$sql = generate_return_sql(strval($row['CopyNo']));
+		lib::db_query($sql);
+	}
+	elseif (isset($_GET['fine'])) {
+		$sql = "SELECT MemberName as 'Customer', AVG(Amount) as 'Average Fine' ";
+		$sql = $sql."FROM Transactions ";
+		$sql = $sql."JOIN Member on Transactions.MemberId = Member.MemberID ";
+		$sql = $sql."GROUP BY Transactions.MemberId";
+
+		$result = lib::db_query($sql);
+		var_dump($result);
+	}
+	elseif (isset($_GET['dname']) && !($_GET['Name']==null)) {
+		$dname = ($_GET['dname'});
+		$sql = "SELECT * FROM Movie WHERE Director LIKE '%".$dname."%'";
+		$dresult = lib::db_query($sql);
+		$dnum_rows = $dresult->num_rows;
+		
+
 	}
 	
 	$mysqli->close();	
@@ -85,24 +108,34 @@ function getresult($sql) {
         <table width="" border="1" cellspacing="0" cellpadding="5">
           <tr  valign="top">
             <td>Title</td>
-            <td>Medium</td>
+            <td>Director</td>
             <td>Date</td>
             <td>Type</td>
             <td>&nbsp;</td>
          </tr>
-         <?php while ( $row = $result->fetch_assoc() ) { ?>
+	 <?php while ( $row = $result->fetch_assoc() ) { ?>
             <tr  valign="top">
-               <td><?= $row['Movie.Title'] ?></td>
-               <td><?= $row['Copy.Type'] ?></td>
-               <td><?= $row['Transactions.DateAndTime'] ?></td>
-                <td><?= $row['Transactions.Type'] ?></td>
-               <td>
-		<input type="submit" value="Return Movie" name="return"/>
-		<input type="submit" value="Reserve Movie" name="reserve"/>		  
-               </td>
+               <td><?= $row['Title'] ?></td>
+               <td><?= $row['Director'] ?></td>
+               <td><?= $row['DateAndTime'] ?></td>
+                <td><?= $row['Type'] ?></td>
+	       <td>
+		<form action="custmenu.php" method="GET">
+			<input type="submit" value="Return Movie" name="return"/>
+			<input type="submit" value="Calculate Fine" name="fine"/>		  
+	       </form>
+		</td>
             </tr>
 	 <?php }  ?>
 	<?php } ?>
-         </table>
-
+	 </table>
+	<br><br><br>
+	<form action="custmenu.php" method="GET">
+		<h4>Find Movies By Director</h4>
+		<label for="Name"><Director Name: </label>
+		<input type="text" name="Name"/>
+		<input type="submit" value="search" name="dname"/> 
+	</form>
+	<br><br><br>
+	<button>Log Out</button>
 	</body>
