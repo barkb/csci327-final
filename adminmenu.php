@@ -5,10 +5,10 @@
 /*
  * DATABASE CONNECTION
  */
-$servername ="localhost";
-$username = "IanStew";
-$password = "123";
-$dbnamer = "videostore";
+define('DB_SERVER', 'localhost');
+define('DB_USERNAME', 'barkb');
+define('DB_PASSWORD', 'csci327');
+define('DB_DATABASE', 'videostore');
 
 $mysqli = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
 if ($mysqli->connect_errno) {
@@ -98,10 +98,15 @@ else {
 			$title = $_GET['title'];
 			$sql = "SELECT * FROM Movie WHERE Title LIKE '%".$title."%'";
 
-			getresult($sql);
+			getresult($sql,'addcopy');
+		}
+		elseif(isset($_GET['addcopy']) && !($_GET['btnpk']==null)){
+			$btnpk = $_GET['btnpk'];
+			echo "Added copy of ".$btnpk;
 		}
 	
-		function getresult($sql) {
+			
+		function getresult($sql,$btntitle) {
 			global $mysqli;
 			$results = $mysqli->query($sql);
 			$fields = $results->fetch_fields();
@@ -117,9 +122,17 @@ else {
 				foreach($row as $cell){
 					echo "<td>".$cell."</td>";
 				}
+				if(!($btntitle==null)){ 
+					echo "<td>";
+					echo "<form action='adminmenu.php' method='GET'>";
+					echo "<input type='hidden' value='".reset($row)."' name='btnpk'/>";
+					echo "<input type='submit' value='Add copy' name='".$btntitle."' />";
+					echo "</td>";
+				}
 				echo "</tr>";
 			}
 			echo "</table>";
+			
 		}
 
 		$mysqli->close();
